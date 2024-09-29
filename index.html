@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>2048 Game</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+    <!-- Stylesheet-->
+    <link rel="stylesheet" href="style.css" />
+
+</head>
+
+<body>
+    <div class="container hide">
+        <div class="heading">
+            <h1>2048</h1>
+            <div class="score-container">
+                Score:
+                <span id="score">0</span>
+            </div>
+        </div>
+        <div class="grid"></div>
+    </div>
+
+    <div class="wallet-container">
+        <button id="connectButton">Connect Wallet</button>
+        <div id="statusMessage"></div>
+        <div id="walletAddress"></div>
+
+        <script>
+            async function connectWallet() {
+                const statusMessage = document.getElementById('statusMessage');
+                const walletAddress = document.getElementById('walletAddress');
+
+                if (window.ethereum) {
+                    try {
+                        // Request account access
+                        await window.ethereum.request({ method: 'eth_requestAccounts' });
+                        const web3 = new Web3(window.ethereum);
+                        const accounts = await web3.eth.getAccounts();
+                        console.log('Wallet connected:', accounts);
+                        statusMessage.textContent = `Wallet connected: ${accounts[0]}`;
+                        walletAddress.textContent = `Connected Address: ${accounts[0]}`; // Assigning ID to address
+                    } catch (error) {
+                        console.error('User denied account access:', error);
+                        statusMessage.textContent = 'User denied account access.';
+                    }
+                } else {
+                    console.error('No Ethereum provider detected. Install MetaMask.');
+                    statusMessage.textContent = 'No Ethereum provider detected. Please install MetaMask.';
+                }
+            }
+
+            // Automatically connect wallet on page load
+            window.addEventListener('load', async () => {
+                await connectWallet();
+            });
+
+            document.getElementById('connectButton').addEventListener('click', connectWallet);
+        </script>
+    </div>
+
+    <div class="cover-screen">
+        <h2 id="over-text" class="hide">Game Over</h2>
+        <p id="result"></p>
+        <button id="start-button">Start Game</button>
+    </div>
+    <!-- Script -->
+    <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.5.3/dist/ethers.min.js"></script>
+</body>
+
+</html>
